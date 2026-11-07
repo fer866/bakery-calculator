@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": { "name": "cookie-cost-calculator", "version": "1.0.0", "target": "mobile-first", "stack": ["html5", "vanilla-js", "css3"] },
+  "layout": {
+    "pattern": "Sticky Hero + Scrollable List + Bottom Fixed Input Bar",
+    "viewport": { "minWidth": "360px", "maxWidth": "480px", "margin": "0 auto" },
+    "sections": [
+      { "id": "app-header", "type": "header", "sticky": false, "elements": [
+          { "type": "title", "text": "CookieCost" },
+          { "type": "badge", "binding": "state.batch.size", "suffix": " galletas" },
+          { "type": "button", "action": "openBatchSettingsModal", "label": "Ajustar Lote" } ] },
+      { "id": "metrics-hero", "type": "section", "sticky": false,
+        "description": "Contenedor de alto impacto visual con gráfico radial SVG y tarjeta de balance",
+        "children": [
+          { "id": "radial-kpi", "type": "radial_progress_svg", "primaryValue": "derived.costPerUnit", "primaryPrefix": "$",
+            "secondaryValue": "derived.profitMarginPct", "secondarySuffix": "% Margen",
+            "visualRatios": { "investmentStroke": "derived.costRatioPct", "profitStroke": "derived.profitRatioPct" } },
+          { "id": "roi-card", "type": "card", "elements": [
+              { "type": "progress_bar", "value": "derived.breakEvenUnits", "max": "state.batch.size" },
+              { "type": "text_narrative", "template": "Vende {derived.breakEvenUnits} de {state.batch.size} galletas para recuperar inversión (${derived.totalCost})." },
+              { "type": "text_subnarrative", "template": "{derived.profitUnits} galletas restantes generan ${derived.totalProfit} de utilidad neta." } ] } ] },
+      { "id": "items-container", "type": "section", "scrollable": true, "elements": [
+          { "id": "items-list", "type": "dynamic_list", "dataSource": "state.items",
+            "itemTemplate": { "name": "string", "weightGrams": "number", "cost": "number", "actions": ["deleteItem", "editItem"] } } ] },
+      { "id": "quick-capture-bar", "type": "footer", "sticky": true, "position": "bottom", "formId": "add-item-form",
+        "inputs": [
+          { "id": "input-name", "type": "text", "placeholder": "Insumo", "required": true },
+          { "id": "input-weight", "type": "number", "inputmode": "decimal", "placeholder": "g / ml", "min": 0.01, "required": true },
+          { "id": "input-cost", "type": "number", "inputmode": "decimal", "placeholder": "$ Costo", "min": 0.01, "required": true },
+          { "id": "btn-submit", "type": "submit", "label": "+" } ] }
+    ]
+  },
+  "stateSchema": {
+    "batch": { "size": 40, "salePricePerUnit": 8.50, "overheadCosts": 0.00 },
+    "items": [
+      { "id": "1", "name": "Harina de Trigo", "weightGrams": 500, "cost": 18.00 },
+      { "id": "2", "name": "Mantequilla", "weightGrams": 250, "cost": 52.00 },
+      { "id": "3", "name": "Chispas de Chocolate", "weightGrams": 200, "cost": 45.00 },
+      { "id": "4", "name": "Azúcar Morena", "weightGrams": 150, "cost": 15.00 }
+    ]
+  },
+  "computationEngine": {
+    "formulas": {
+      "totalCost": "state.items.reduce((acc, curr) => acc + curr.cost, 0) + state.batch.overheadCosts",
+      "costPerUnit": "totalCost / state.batch.size",
+      "totalRevenue": "state.batch.size * state.batch.salePricePerUnit",
+      "totalProfit": "totalRevenue - totalCost",
+      "profitMarginPct": "((state.batch.salePricePerUnit - costPerUnit) / state.batch.salePricePerUnit) * 100",
+      "breakEvenUnits": "Math.ceil(totalCost / state.batch.salePricePerUnit)",
+      "profitUnits": "Math.max(0, state.batch.size - breakEvenUnits)",
+      "costRatioPct": "(costPerUnit / state.batch.salePricePerUnit) * 100",
+      "profitRatioPct": "100 - costRatioPct"
+    },
+    "validationRules": { "preventNegativeROI": "state.batch.salePricePerUnit >= costPerUnit", "batchSizeMinimum": "state.batch.size >= 1" }
+  },
+  "eventHandlers": {
+    "DOM_EVENTS": [
+      { "target": "#add-item-form", "event": "submit", "handler": "handleAddItem", "behavior": "preventDefault, parse formData, append to state.items, recalculate, re-render diff nodes, reset form, keep input focus" },
+      { "target": ".btn-delete-item", "event": "click", "handler": "handleDeleteItem", "behavior": "extract dataset.id, filter state.items, recalculate, re-render" },
+      { "target": "#batch-size-input, #sale-price-input", "event": "input", "handler": "handleBatchUpdate", "behavior": "update state.batch values, debounce 150ms, recalculate, re-render KPIs" }
+    ]
+  },
+  "uiDesignTokens": {
+    "theme": "light",
+    "colors": { "background": "#F9FAFB", "surface": "#FFFFFF", "primary": "#D97706", "primaryDark": "#B45309", "textMain": "#111827", "textMuted": "#6B7280", "accentCost": "#EF4444", "accentProfit": "#10B981", "border": "#E5E7EB" },
+    "typography": { "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", "heroMetric": "font-size: 2rem; font-weight: 700; line-height: 1;", "body": "font-size: 0.875rem; line-height: 1.25rem;" },
+    "spacing": { "stickyBarHeight": "64px", "safeAreaBottom": "env(safe-area-inset-bottom)" }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Bakery Calculator - Paulicious Bakery",
+  "short_name": "Bakery Calc",
+  "description": "Calculadora inteligente de costos, márgenes de ganancia, ROI e inventario para repostería artesanal.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FDF8F3",
+  "theme_color": "#FDF8F3",
+  "orientation": "portrait-primary",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"]
+}
