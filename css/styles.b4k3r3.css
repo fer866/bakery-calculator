@@ -1,4 +1,4 @@
-﻿/* Bakery Calculator - Stylesheet (v2.1.0-b4k3r2) */
+﻿/* Bakery Calculator - Stylesheet (v2.1.0-b4k3r3) */
 :root {
   color-scheme: light dark;
   --bg-main: light-dark(#FDF8F3, #1A120E);
@@ -908,4 +908,5 @@ dialog.custom-modal::backdrop {
 .driver-popover-arrow-side-right { border-right-color: var(--surface) !important; }
 .driver-popover-arrow-side-top { border-top-color: var(--surface) !important; }
 .driver-popover-arrow-side-bottom { border-bottom-color: var(--surface) !important; }
+
 

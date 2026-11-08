@@ -1,5 +1,5 @@
 ﻿/**
- * Bakery Calculator - Database Module (v2.1.0-b4k3r2)
+ * Bakery Calculator - Database Module (v2.1.0-b4k3r3)
  * Reactive IndexedDB abstraction with Promises.
  */
 
@@ -268,7 +268,6 @@ export async function exportDatabaseJSON() {
     preferencias: { theme_preference: themePref }
   }, null, 2);
 }
-}
 
 /**
  * Full JSON import of database
@@ -298,4 +297,5 @@ export async function importDatabaseJSON(jsonString) {
 
   return true;
 }
+
 
