@@ -1,9 +1,9 @@
-/**
- * Bakery Calculator - Service Worker (v2.1.0-b4k3r1)
+﻿/**
+ * Bakery Calculator - Service Worker (v2.2.0-b4k3r2)
  * Offline-first caching with immediate skipWaiting, clients.claim and silent updates.
  */
 
-const CACHE_NAME = 'bakery-calc-v2-b4k3r1';
+const CACHE_NAME = 'bakery-calc-v2-b4k3r2';
 
 const PRECACHE_ASSETS = [
   './',
@@ -12,17 +12,16 @@ const PRECACHE_ASSETS = [
   './favicon.svg',
   './icon-192.png',
   './icon-512.png',
-  './logo_paulicious_bakery.jpg',
   './llms.txt',
-  './css/styles.b4k3r1.css',
+  './css/styles.b4k3r2.css',
   './css/vendor/driver.css',
   './js/vendor/driver.iife.js',
-  './js/app.b4k3r1.js',
-  './js/db.b4k3r1.js',
-  './js/engine.b4k3r1.js',
-  './js/ui.b4k3r1.js',
-  './js/theme.b4k3r1.js',
-  './js/tour.b4k3r1.js'
+  './js/app.b4k3r2.js',
+  './js/db.b4k3r2.js',
+  './js/engine.b4k3r2.js',
+  './js/ui.b4k3r2.js',
+  './js/theme.b4k3r2.js',
+  './js/tour.b4k3r2.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -100,3 +99,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+

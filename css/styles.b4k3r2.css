@@ -1,4 +1,4 @@
-/* Bakery Calculator - Stylesheet (v2.1.0-b4k3r1) */
+﻿/* Bakery Calculator - Stylesheet (v2.1.0-b4k3r2) */
 :root {
   color-scheme: light dark;
   --bg-main: light-dark(#FDF8F3, #1A120E);
@@ -827,18 +827,85 @@ dialog.custom-modal::backdrop {
   line-height: 1.4 !important;
 }
 
+/* Close button - completely eliminate focus box / outline / borders */
+.driver-popover-close-btn {
+  all: unset !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+  color: var(--text-muted) !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: var(--radius-sm) !important;
+  transition: color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.driver-popover-close-btn:hover,
+.driver-popover-close-btn:focus,
+.driver-popover-close-btn:focus-visible,
+.driver-popover-close-btn:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: var(--primary) !important;
+  background-color: var(--surface-input) !important;
+}
+
+/* Footer buttons - eliminate text-shadow (fixing double/ghost text bug) */
 .driver-popover-footer button {
+  all: unset !important;
+  display: inline-block !important;
+  box-sizing: border-box !important;
   background-color: var(--surface-input) !important;
   color: var(--text-primary) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-sm) !important;
   padding: 6px 12px !important;
   font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  text-shadow: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.driver-popover-footer button:hover {
+  background-color: var(--border) !important;
+  text-shadow: none !important;
 }
 
 .driver-popover-footer button.driver-popover-next-btn {
   background-color: var(--primary) !important;
-  color: #FFF !important;
+  color: #FFFFFF !important;
   border-color: var(--primary) !important;
   font-weight: 600 !important;
+  text-shadow: none !important;
 }
+
+.driver-popover-footer button.driver-popover-next-btn:hover {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  text-shadow: none !important;
+}
+
+.driver-popover-progress-text {
+  color: var(--text-muted) !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+/* Popover Arrow matches dynamic surface */
+.driver-popover-arrow-side-left { border-left-color: var(--surface) !important; }
+.driver-popover-arrow-side-right { border-right-color: var(--surface) !important; }
+.driver-popover-arrow-side-top { border-top-color: var(--surface) !important; }
+.driver-popover-arrow-side-bottom { border-bottom-color: var(--surface) !important; }
+

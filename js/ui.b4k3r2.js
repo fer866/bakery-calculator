@@ -1,5 +1,5 @@
-/**
- * Bakery Calculator - UI Module (v2.1.0-b4k3r1)
+﻿/**
+ * Bakery Calculator - UI Module (v2.1.0-b4k3r2)
  * Component rendering, reactive DOM diffing, toasts and native dialogs.
  */
 
@@ -7,7 +7,7 @@ import {
   computeRecipeFinancials,
   formatCurrencyMXN,
   formatPercent
-} from './engine.b4k3r1.js';
+} from './engine.b4k3r2.js';
 
 /* Toast Notification Manager */
 export function showToast(message, type = 'info', duration = 3500) {
@@ -160,7 +160,58 @@ export function updateSimulatorControls(financials) {
 
   const bakeCtaBtn = document.getElementById('btn-bake-cta');
   if (bakeCtaBtn) {
+    bakeCtaBtn.disabled = false;
+    bakeCtaBtn.style.opacity = '1';
     bakeCtaBtn.innerHTML = `<span>👨‍🍳</span> Hornear 1 Lote (${financials.piezasPorLote} pzas)`;
+  }
+}
+
+/* Empty State Renderer for Dashboard */
+export function renderDashboardEmptyState() {
+  const marginValEl = document.getElementById('hero-margin-value');
+  const unitCostEl = document.getElementById('hero-unit-cost');
+  const salePriceEl = document.getElementById('hero-sale-price');
+  const circleProfit = document.getElementById('radial-circle-profit');
+  const roiValEl = document.getElementById('roi-value-display');
+  const batchCostEl = document.getElementById('roi-batch-cost');
+  const batchRevenueEl = document.getElementById('roi-batch-revenue');
+  const beProgressEl = document.getElementById('roi-break-even-progress');
+  const narrativeEl = document.getElementById('roi-narrative-text');
+  const simProfitDisplay = document.getElementById('sim-unit-profit');
+  const simPriceInput = document.getElementById('sim-sale-price-input');
+  const simSlider = document.getElementById('sim-sale-price-slider');
+  const bakeCtaBtn = document.getElementById('btn-bake-cta');
+
+  if (marginValEl) {
+    marginValEl.textContent = '0%';
+    marginValEl.style.color = 'var(--text-muted)';
+  }
+  if (unitCostEl) unitCostEl.textContent = '$0.00';
+  if (salePriceEl) salePriceEl.textContent = '$0.00';
+  if (circleProfit) {
+    circleProfit.style.strokeDasharray = '402.12';
+    circleProfit.style.strokeDashoffset = '402.12';
+  }
+
+  if (roiValEl) roiValEl.textContent = '0%';
+  if (batchCostEl) batchCostEl.textContent = '$0.00';
+  if (batchRevenueEl) batchRevenueEl.textContent = '$0.00';
+  if (beProgressEl) beProgressEl.style.width = '0%';
+
+  if (narrativeEl) {
+    narrativeEl.innerHTML = `
+      Aún no tienes recetas registradas. Sigue el <strong>Tour de Inicio</strong> o pulsa en <strong>Recetas</strong> para agregar tu primera creación.
+    `;
+  }
+
+  if (simPriceInput) simPriceInput.value = '0.00';
+  if (simSlider) simSlider.value = '0.00';
+  if (simProfitDisplay) simProfitDisplay.textContent = '$0.00 / pza';
+
+  if (bakeCtaBtn) {
+    bakeCtaBtn.innerHTML = `<span>👨‍🍳</span> Sin Receta Activa`;
+    bakeCtaBtn.disabled = true;
+    bakeCtaBtn.style.opacity = '0.6';
   }
 }
 
@@ -229,12 +280,18 @@ export function renderRecipesList(recipes = [], allInsumosMap = {}, globalIndire
 
   // Sync hero dropdown
   if (selectPicker) {
-    const currentVal = selectPicker.value;
-    selectPicker.innerHTML = recipes.map(r => `
-      <option value="${r.id}" ${r.id === currentVal ? 'selected' : ''}>🍪 ${escapeHTML(r.nombre)} (${r.piezasPorLote} pzas)</option>
-    `).join('');
-    if (!recipes.some(r => r.id === currentVal) && recipes.length > 0) {
-      selectPicker.value = recipes[0].id;
+    if (recipes.length === 0) {
+      selectPicker.innerHTML = `<option value="">(Sin recetas registradas)</option>`;
+      selectPicker.disabled = true;
+    } else {
+      selectPicker.disabled = false;
+      const currentVal = selectPicker.value;
+      selectPicker.innerHTML = recipes.map(r => `
+        <option value="${r.id}" ${r.id === currentVal ? 'selected' : ''}>🍪 ${escapeHTML(r.nombre)} (${r.piezasPorLote} pzas)</option>
+      `).join('');
+      if (!recipes.some(r => r.id === currentVal) && recipes.length > 0) {
+        selectPicker.value = recipes[0].id;
+      }
     }
   }
 
@@ -294,3 +351,4 @@ export function escapeHTML(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
