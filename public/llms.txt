@@ -1,4 +1,4 @@
-﻿# Bakery Calculator
+# Bakery Calculator
 
 > Aplicación web progresiva (PWA) móvil, offline-first, para costeo de repostería y panadería artesanal, cálculo de márgenes, punto de equilibrio y control de inventario.
 
@@ -7,7 +7,7 @@
 - Dependencia Onboarding: Driver.js (empaquetado local en vendor/driver.iife.js y css/vendor/driver.css para soporte 100% offline).
 - Persistencia: IndexedDB (Base de datos: BakeryCalculatorDB v2) con promesas reactivas y soporte de exportación/importación JSON.
 - Autor: Erik Fernando Pérez Díaz.
-- Ciclo de vida PWA: Service Worker (sw.js) con actualización transparente en transiciones de ruta, skipWaiting y clients.claim, sin banners molestos.
+- Ciclo de vida PWA: Service Worker (public/sw.js) con actualización transparente en transiciones de ruta, skipWaiting y clients.claim, sin banners molestos.
 - Moneda: Peso Mexicano (MXN $ fijo con formato estándar $#,##0.00).
 
 ## Fórmulas Financieras y de Rendimiento
@@ -23,23 +23,23 @@
 - piezasGanancia = max(0, piezasPorLote - puntoEquilibrio)
 - utilidadLote = (piezasPorLote × precioVenta) - costoTotalLote
 
-## Estructura de Módulos
-- `index.html`: Shell PWA accesible, meta tags SEO, JSON-LD Schema.org, sin código JavaScript embebido.
-- `manifest.webmanifest`: Manifiesto de instalación PWA con soporte standalone y visualización responsiva.
-- `sw.js`: Service Worker offline con precaché determinista y ciclo de vida inmediato.
-- `css/styles.b4k3r3.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
-- `css/vendor/driver.css`: Estilos del tour guiado interactivo de onboarding.
-- `js/vendor/driver.iife.js`: Biblioteca vanilla Driver.js empaquetada para uso offline.
-- `js/engine.b4k3r3.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
-- `js/db.b4k3r3.js`: Capa de persistencia IndexedDB con transacciones asíncronas para insumos, recetas/postres, lotes y configuración.
-- `js/theme.b4k3r3.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
-- `js/tour.b4k3r3.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
-- `js/ui.b4k3r3.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
-- `js/app.b4k3r3.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
+## Estructura del Repositorio y Módulos
+- `functions/`: Endpoints serverless de Cloudflare Pages Functions (`/ping`, `/api/ping`) con soporte para Bindings (KV, D1, etc.).
+- `public/`: Directorio raíz de salida estática servido por Cloudflare Pages.
+  - `index.html`: Shell PWA accesible, meta tags SEO, JSON-LD Schema.org, sin código JavaScript embebido.
+  - `manifest.webmanifest`: Manifiesto de instalación PWA con soporte standalone y visualización responsiva.
+  - `sw.js`: Service Worker offline con precaché determinista y ciclo de vida inmediato.
+  - `css/styles.b4k3r3.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
+  - `css/vendor/driver.css`: Estilos del tour guiado interactivo de onboarding.
+  - `js/vendor/driver.iife.js`: Biblioteca vanilla Driver.js empaquetada para uso offline.
+  - `js/engine.b4k3r3.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
+  - `js/db.b4k3r3.js`: Capa de persistencia IndexedDB con transacciones asíncronas para insumos, recetas/postres, lotes y configuración.
+  - `js/theme.b4k3r3.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
+  - `js/tour.b4k3r3.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
+  - `js/ui.b4k3r3.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
+  - `js/app.b4k3r3.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
 
 ## Inicialización y Onboarding (Desde Cero)
 - Arquitectura limpia: La app no incluye datos precargados de marcas o postres específicos; inicia desde cero.
 - Tour interactivo (Driver.js): Guía paso a paso al usuario para registrar la marca/taller, configurar costos operativos e indirectos (gas, empaque, mano de obra), dar de alta insumos con sus costos por presentación, armar recetas y analizar margen real, ROI y punto de equilibrio.
 - Persistencia y respaldo: Datos guardados localmente en IndexedDB, con opción de exportar/importar respaldo JSON en cualquier momento.
-
-
