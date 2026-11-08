@@ -1,9 +1,10 @@
-﻿/**
- * Bakery Calculator - Service Worker (v2.2.0-b4k3r3)
+/**
+ * Bakery Calculator - Service Worker (v2.2.0-b4k3r4)
  * Offline-first caching with immediate skipWaiting, clients.claim and silent updates.
+ * Excluye deliberadamente /api/* para delegar la persistencia dinámica a Cloudflare D1.
  */
 
-const CACHE_NAME = 'bakery-calc-v2-b4k3r3';
+const CACHE_NAME = 'bakery-calc-v2-b4k3r4';
 
 const PRECACHE_ASSETS = [
   './',
@@ -13,15 +14,15 @@ const PRECACHE_ASSETS = [
   './icon-192.png',
   './icon-512.png',
   './llms.txt',
-  './css/styles.b4k3r3.css',
+  './css/styles.b4k3r4.css',
   './css/vendor/driver.css',
   './js/vendor/driver.iife.js',
-  './js/app.b4k3r3.js',
-  './js/db.b4k3r3.js',
-  './js/engine.b4k3r3.js',
-  './js/ui.b4k3r3.js',
-  './js/theme.b4k3r3.js',
-  './js/tour.b4k3r3.js'
+  './js/app.b4k3r4.js',
+  './js/db.b4k3r4.js',
+  './js/engine.b4k3r4.js',
+  './js/ui.b4k3r4.js',
+  './js/theme.b4k3r4.js',
+  './js/tour.b4k3r4.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -57,6 +58,11 @@ self.addEventListener('fetch', (event) => {
 
   // Ignore chrome-extension or external cross-origin requests outside scope
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Ignorar /api/* para que siempre vaya en vivo a Cloudflare Pages Functions y D1
+  if (url.pathname.startsWith('/api/')) {
     return;
   }
 
@@ -99,5 +105,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
-

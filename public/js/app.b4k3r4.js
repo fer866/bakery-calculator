@@ -1,5 +1,5 @@
 ﻿/**
- * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r3)
+ * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r4)
  * Decoupled event delegation, route orchestrator and silent SW updater.
  */
 
@@ -16,23 +16,23 @@ import {
   clearAllData,
   exportDatabaseJSON,
   importDatabaseJSON
-} from './db.b4k3r3.js';
+} from './db.b4k3r4.js';
 
 import {
   computeRecipeFinancials,
   formatCurrencyMXN
-} from './engine.b4k3r3.js';
+} from './engine.b4k3r4.js';
 
 import {
   initTheme,
   applyTheme
-} from './theme.b4k3r3.js';
+} from './theme.b4k3r4.js';
 
 import {
   startTour,
   resetTour,
   shouldShowTour
-} from './tour.b4k3r3.js';
+} from './tour.b4k3r4.js';
 
 import {
   showToast,
@@ -44,7 +44,7 @@ import {
   renderRecipesList,
   renderDashboardEmptyState,
   escapeHTML
-} from './ui.b4k3r3.js';
+} from './ui.b4k3r4.js';
 
 /* App Global State */
 const state = {
@@ -90,9 +90,17 @@ export function switchView(targetTabId) {
 
 /* Data Loaders and State Synchronizers */
 export async function refreshAllData() {
-  state.insumos = await getAll('insumos');
-  state.recipes = await getAll('postres');
-  state.globalIndirects = await getGlobalIndirects();
+  try {
+    state.insumos = await getAll('insumos');
+    state.recipes = await getAll('postres');
+    state.globalIndirects = await getGlobalIndirects();
+  } catch (err) {
+    console.error('Error al sincronizar datos con Cloudflare D1:', err);
+    showToast('Error al conectar con Cloudflare D1: ' + err.message, 'danger', 6000);
+    state.insumos = state.insumos || [];
+    state.recipes = state.recipes || [];
+    state.globalIndirects = state.globalIndirects || {};
+  }
 
   state.insumosMap = {};
   for (const ins of state.insumos) {
@@ -841,5 +849,6 @@ if (document.readyState === 'loading') {
 } else {
   initApp();
 }
+
 
 

@@ -1,5 +1,5 @@
-﻿/**
- * Bakery Calculator - Engine Module (v2.1.0-b4k3r3)
+/**
+ * Bakery Calculator - Engine Module (v2.2.0-b4k3r4)
  * Mathematical costing engine, ROI, break-even and unit conversion.
  */
 
@@ -122,7 +122,7 @@ export function computeRecipeFinancials(recipe, allInsumosMap = {}, globalIndire
   // Priority: recipe overrides -> globalIndirects defaults
   const ind = recipe.indirectos || {};
   const gasMinutos = Number(ind.gasMinutos ?? globalIndirects.gasMinutos ?? 18);
-  const costoGasPorMinuto = Number(ind.costoGasPorMinuto ?? globalIndirects.costoGasPorMinuto ?? 0.2667); // ~$4.80 for 18 min
+  const costoGasPorMinuto = Number(ind.costoGasPorMinuto ?? globalIndirects.costoGasPorMinuto ?? 0.2667);
   const gasTotal = gasMinutos * costoGasPorMinuto;
 
   const tarifaHoraManoObra = Number(ind.tarifaHoraManoObra ?? globalIndirects.tarifaHoraManoObra ?? 80.00);
@@ -192,5 +192,3 @@ export function computeRecipeFinancials(recipe, allInsumosMap = {}, globalIndire
     profitRatioPct
   };
 }
-
-

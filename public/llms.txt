@@ -5,9 +5,12 @@
 ## Arquitectura y Stack
 - Frontend: HTML5 semántico, CSS3 moderno (color-scheme, light-dark(), custom properties), Vanilla JavaScript modular (ES Modules).
 - Dependencia Onboarding: Driver.js (empaquetado local en vendor/driver.iife.js y css/vendor/driver.css para soporte 100% offline).
-- Persistencia: IndexedDB (Base de datos: BakeryCalculatorDB v2) con promesas reactivas y soporte de exportación/importación JSON.
+- Persistencia Híbrida:
+  - Base de Datos de Negocio: Cloudflare D1 (`bakery-db`) mediante Cloudflare Pages Functions (`/api/*`) para catálogo de insumos, stock, recetas (postres), historial de lotes horneados y costos indirectos de la empresa.
+  - Almacenamiento Local (IndexedDB `BakeryCalculatorUserPrefs`): Reservado exclusivamente para preferencias personales y ajustes de interfaz del usuario (tema visual claro/oscuro, estado del tour interactivo).
+- Backend Serverless: Cloudflare Pages Functions en `/functions/api/` con bindings nativos a `env.DB`.
 - Autor: Erik Fernando Pérez Díaz.
-- Ciclo de vida PWA: Service Worker (public/sw.js) con actualización transparente en transiciones de ruta, skipWaiting y clients.claim, sin banners molestos.
+- Ciclo de vida PWA: Service Worker (`public/sw.js`) con precaché determinista, exclusión de `/api/*` dinámicos, skipWaiting y clients.claim, sin banners molestos.
 - Moneda: Peso Mexicano (MXN $ fijo con formato estándar $#,##0.00).
 
 ## Fórmulas Financieras y de Rendimiento
@@ -24,22 +27,30 @@
 - utilidadLote = (piezasPorLote × precioVenta) - costoTotalLote
 
 ## Estructura del Repositorio y Módulos
-- `functions/`: Endpoints serverless de Cloudflare Pages Functions (`/ping`, `/api/ping`) con soporte para Bindings (KV, D1, etc.).
-- `public/`: Directorio raíz de salida estática servido por Cloudflare Pages.
+- `functions/`: Endpoints serverless de Cloudflare Pages Functions:
+  - `ping.js` / `api/ping.js`: Endpoint de salud y diagnóstico de bindings activos.
+  - `api/insumos.js`: CRUD de insumos y ajuste rápido de inventario (+1 toque).
+  - `api/postres.js`: CRUD de recetas con serialización JSON de indirectos e ingredientes.
+  - `api/empresa.js`: Consulta y actualización de datos de la empresa y costos indirectos globales.
+  - `api/lotes.js`: Deducción atómica transaccional de stock con `env.DB.batch` e historial de horneado.
+  - `api/backup.js`: Exportación e importación de respaldo JSON completo de la base de datos D1.
+  - `api/clear.js`: Vaciado controlado de tablas de negocio en D1.
+- `schema.sql`: Definición DDL SQLite para Cloudflare D1 (`bakery-db`).
+- `public/`: Directorio raíz estático servido por Cloudflare Pages.
   - `index.html`: Shell PWA accesible, meta tags SEO, JSON-LD Schema.org, sin código JavaScript embebido.
   - `manifest.webmanifest`: Manifiesto de instalación PWA con soporte standalone y visualización responsiva.
-  - `sw.js`: Service Worker offline con precaché determinista y ciclo de vida inmediato.
-  - `css/styles.b4k3r3.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
+  - `sw.js`: Service Worker offline con precaché determinista y exclusión de rutas dinámicas `/api/*`.
+  - `css/styles.b4k3r4.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
   - `css/vendor/driver.css`: Estilos del tour guiado interactivo de onboarding.
   - `js/vendor/driver.iife.js`: Biblioteca vanilla Driver.js empaquetada para uso offline.
-  - `js/engine.b4k3r3.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
-  - `js/db.b4k3r3.js`: Capa de persistencia IndexedDB con transacciones asíncronas para insumos, recetas/postres, lotes y configuración.
-  - `js/theme.b4k3r3.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
-  - `js/tour.b4k3r3.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
-  - `js/ui.b4k3r3.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
-  - `js/app.b4k3r3.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
+  - `js/engine.b4k3r4.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
+  - `js/db.b4k3r4.js`: Capa de datos desacoplada: cliente API REST hacia Cloudflare D1 y capa IndexedDB para preferencias locales.
+  - `js/theme.b4k3r4.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
+  - `js/tour.b4k3r4.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
+  - `js/ui.b4k3r4.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
+  - `js/app.b4k3r4.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
 
-## Inicialización y Onboarding (Desde Cero)
-- Arquitectura limpia: La app no incluye datos precargados de marcas o postres específicos; inicia desde cero.
+## Inicialización y Onboarding
+- Arquitectura limpia: La app inicia lista para configurar insumos y recetas conectadas a Cloudflare D1.
 - Tour interactivo (Driver.js): Guía paso a paso al usuario para registrar la marca/taller, configurar costos operativos e indirectos (gas, empaque, mano de obra), dar de alta insumos con sus costos por presentación, armar recetas y analizar margen real, ROI y punto de equilibrio.
-- Persistencia y respaldo: Datos guardados localmente en IndexedDB, con opción de exportar/importar respaldo JSON en cualquier momento.
+- Persistencia y respaldo: Datos del negocio guardados en Cloudflare D1 en la nube, con opción de exportar/importar respaldo JSON en cualquier momento.

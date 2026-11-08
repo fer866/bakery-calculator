@@ -1,5 +1,5 @@
-﻿/**
- * Bakery Calculator - Tour Module (v2.1.0-b4k3r3)
+/**
+ * Bakery Calculator - Tour Module (v2.2.0-b4k3r4)
  * Guided onboarding experience powered by Driver.js (offline-ready).
  * Guides the user step-by-step starting completely from scratch:
  * 1. Welcome & Brand Identity
@@ -11,7 +11,7 @@
  * 7. One-click Batch Baking
  */
 
-import { getPreference, setPreference } from './db.b4k3r3.js';
+import { getPreference, setPreference } from './db.b4k3r4.js';
 
 let driverInstance = null;
 
@@ -74,7 +74,7 @@ export function startTour(force = false) {
           element: '.app-header',
           popover: {
             title: '👋 ¡Bienvenido a Bakery Calculator!',
-            description: 'Tu calculadora profesional offline para costear tus postres, asegurar tu margen de ganancia y controlar tu inventario. La app inicia desde cero para que configures tu propio taller o repostería.',
+            description: 'Tu calculadora profesional conectada a Cloudflare D1 para costear tus postres, asegurar tu margen de ganancia y controlar tu inventario. La app inicia desde cero para que configures tu propio taller o repostería.',
             side: 'bottom',
             align: 'center'
           },
@@ -86,7 +86,7 @@ export function startTour(force = false) {
           element: '#settings-negocio-nombre',
           popover: {
             title: '1. Registra tu Marca o Taller',
-            description: 'Comienza escribiendo aquí el nombre de tu repostería o taller. Se mostrará en el encabezado de la app y en tus reportes exportados.',
+            description: 'Comienza escribiendo aquí el nombre de tu repostería o taller. Se guardará en la nube y se mostrará en el encabezado de la app y en tus reportes exportados.',
             side: 'bottom',
             align: 'start'
           },
@@ -158,7 +158,7 @@ export function startTour(force = false) {
           element: '#btn-bake-cta',
           popover: {
             title: '7. Hornear en 1 Clic',
-            description: 'Cuando prepares un lote, pulsa este botón. El sistema registrará la producción y descontará automáticamente del inventario las cantidades de cada insumo.',
+            description: 'Cuando prepares un lote, pulsa este botón. El sistema registrará la producción y descontará automáticamente del inventario las cantidades de cada insumo en la base de datos.',
             side: 'top',
             align: 'center'
           },
@@ -172,5 +172,3 @@ export function startTour(force = false) {
     driverInstance.drive();
   }, 120);
 }
-
-
