@@ -1,5 +1,5 @@
-/**
- * Bakery Calculator - Database Module (v2.1.0-b4k3r1)
+﻿/**
+ * Bakery Calculator - Database Module (v2.1.0-b4k3r2)
  * Reactive IndexedDB abstraction with Promises.
  */
 
@@ -120,7 +120,7 @@ export async function getGlobalIndirects() {
     tiempoManoObraMin: 45,     // ~$60.00 por lote de 45 min
     empaquePorPieza: 2.00,     // Bolsa + Listón + Sticker por pieza
     otrosIndirectos: 0.00,
-    nombreNegocio: 'Paulicious Bakery'
+    nombreNegocio: ''
   };
 
   const stored = await getById('gastosGenerales', 'global_indirects');
@@ -209,223 +209,42 @@ export async function addStockToInsumo(insumoId, cantidadAñadida) {
 }
 
 /**
- * Seed data loader matching Excel and plan specifications exactly.
+ * Initialize default user preferences without any preloaded seed data.
+ * The application starts completely blank (from scratch).
  */
-export async function loadSeedData(forceReset = false) {
-  const existingInsumos = await getAll('insumos');
-  if (existingInsumos.length > 0 && !forceReset) {
-    return false; // Already populated
+export async function initDatabaseDefaults() {
+  const existingTheme = await getPreference('theme_preference');
+  if (!existingTheme) {
+    await setPreference('theme_preference', 'auto');
   }
 
-  const defaultInsumos = [
-    {
-      id: 'ins-mantequilla',
-      nombre: 'Mantequilla sin sal',
-      proveedor: "Sam's",
-      cantidadPres: 1080,
-      unidadPres: 'g',
-      precioPres: 256.77,
-      stockActual: 2160,
-      stockMinimo: 400,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-azucar-mascabada',
-      nombre: 'Azúcar mascabada',
-      proveedor: "Sam's",
-      cantidadPres: 2000,
-      unidadPres: 'g',
-      precioPres: 69.56,
-      stockActual: 2000,
-      stockMinimo: 300,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-azucar-refinada',
-      nombre: 'Azúcar refinada',
-      proveedor: "Sam's",
-      cantidadPres: 4000,
-      unidadPres: 'g',
-      precioPres: 102.30,
-      stockActual: 4000,
-      stockMinimo: 300,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-huevos',
-      nombre: 'Huevos frescos',
-      proveedor: "Sam's",
-      cantidadPres: 1500, // Matching 1500g in Excel sheet CHISPAS ($0.0927/2pzas) / 30 pzas in M&M's
-      unidadPres: 'g',
-      precioPres: 69.56,
-      stockActual: 1500,
-      stockMinimo: 200,
-      piezasPorPresentacion: 30,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-vainilla',
-      nombre: 'Extracto de vainilla',
-      proveedor: 'La Mimi',
-      cantidadPres: 1000,
-      unidadPres: 'ml',
-      precioPres: 100.00,
-      stockActual: 1000,
-      stockMinimo: 100,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-harina',
-      nombre: 'Harina (todo uso)',
-      proveedor: 'Costco',
-      cantidadPres: 4000,
-      unidadPres: 'g',
-      precioPres: 129.00,
-      stockActual: 4000,
-      stockMinimo: 500,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-sal',
-      nombre: 'Sal fina',
-      proveedor: 'Walmart',
-      cantidadPres: 750,
-      unidadPres: 'g',
-      precioPres: 21.00,
-      stockActual: 750,
-      stockMinimo: 100,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-bicarbonato',
-      nombre: 'Bicarbonato de sodio',
-      proveedor: 'Walmart',
-      cantidadPres: 227,
-      unidadPres: 'g',
-      precioPres: 25.00,
-      stockActual: 227,
-      stockMinimo: 50,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-fecula',
-      nombre: 'Fécula de maíz (Maizena)',
-      proveedor: 'Walmart',
-      cantidadPres: 750,
-      unidadPres: 'g',
-      precioPres: 96.00,
-      stockActual: 750,
-      stockMinimo: 100,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-chips-semiamargo',
-      nombre: 'Chips chocolate semiamargo',
-      proveedor: 'Central',
-      cantidadPres: 500,
-      unidadPres: 'g',
-      precioPres: 100.00,
-      stockActual: 150, // Stock crítico intencional para demostrar T-05
-      stockMinimo: 300,
-      updatedAt: Date.now()
-    },
-    {
-      id: 'ins-myms-mini',
-      nombre: "M&M's (mini)",
-      proveedor: 'Central',
-      cantidadPres: 2000,
-      unidadPres: 'g',
-      precioPres: 763.20,
-      stockActual: 600,
-      stockMinimo: 350,
-      updatedAt: Date.now()
-    }
-  ];
-
-  // Specific insumos for CHISPAS: Raw ingredients sum $134.65 ($8.42/unit)
-  const defaultRecipes = [
-    {
-      id: 'rec-chispas',
-      nombre: 'Galletas Chispas de Chocolate (80g)',
-      piezasPorLote: 16,
-      pesoPieza: 80,
-      precioVenta: 28.50,
-      mermaPct: 0,
-      indirectos: {
-        gasMinutos: 18,
-        costoGasPorMinuto: 0.2667,
-        tarifaHoraManoObra: 80.00,
-        tiempoManoObraMin: 45,
-        empaquePorPieza: 2.00,
-        otrosIndirectos: 0.00
-      },
-      insumos: [
-        { insumoId: 'ins-mantequilla', nombre: 'Mantequilla', cantidad: 200, unidad: 'g' },
-        { insumoId: 'ins-azucar-mascabada', nombre: 'Azúcar mascabada', cantidad: 160, unidad: 'g' },
-        { insumoId: 'ins-azucar-refinada', nombre: 'Azúcar refinada', cantidad: 70, unidad: 'g' },
-        { insumoId: 'ins-huevos', nombre: 'Huevos', cantidad: 2, unidad: 'g' }, // 2g or ~0.0927 in Excel formula
-        { insumoId: 'ins-vainilla', nombre: 'Vainilla', cantidad: 10, unidad: 'ml' },
-        { insumoId: 'ins-harina', nombre: 'Harina (todo uso)', cantidad: 420, unidad: 'g' },
-        { insumoId: 'ins-sal', nombre: 'Sal', cantidad: 2, unidad: 'g' },
-        { insumoId: 'ins-bicarbonato', nombre: 'Bicarbonato', cantidad: 4, unidad: 'g' },
-        { insumoId: 'ins-fecula', nombre: 'Fécula de maíz', cantidad: 36, unidad: 'g' },
-        { insumoId: 'ins-chips-semiamargo', nombre: 'Chips chocolate semiamargo', cantidad: 300, unidad: 'g' }
-      ],
-      updatedAt: Date.now()
-    },
-    {
-      id: 'rec-myms',
-      nombre: "Galletas M&M's Mini (80g)",
-      piezasPorLote: 16,
-      pesoPieza: 80,
-      precioVenta: 32.00,
-      mermaPct: 0,
-      indirectos: {
-        gasMinutos: 18,
-        costoGasPorMinuto: 0.2667,
-        tarifaHoraManoObra: 80.00,
-        tiempoManoObraMin: 45,
-        empaquePorPieza: 2.00,
-        otrosIndirectos: 0.00
-      },
-      insumos: [
-        { insumoId: 'ins-mantequilla', nombre: 'Mantequilla', cantidad: 200, unidad: 'g' },
-        { insumoId: 'ins-azucar-mascabada', nombre: 'Azúcar mascabada', cantidad: 160, unidad: 'g' },
-        { insumoId: 'ins-azucar-refinada', nombre: 'Azúcar refinada', cantidad: 70, unidad: 'g' },
-        { insumoId: 'ins-huevos', nombre: 'Huevos', cantidad: 100, unidad: 'g' }, // 2 eggs ~ 100g = $4.64
-        { insumoId: 'ins-vainilla', nombre: 'Vainilla', cantidad: 10, unidad: 'ml' },
-        { insumoId: 'ins-harina', nombre: 'Harina (todo uso)', cantidad: 420, unidad: 'g' },
-        { insumoId: 'ins-sal', nombre: 'Sal', cantidad: 2, unidad: 'g' },
-        { insumoId: 'ins-bicarbonato', nombre: 'Bicarbonato', cantidad: 4, unidad: 'g' },
-        { insumoId: 'ins-fecula', nombre: 'Fécula de maíz', cantidad: 36, unidad: 'g' },
-        { insumoId: 'ins-myms-mini', nombre: "M&M's (mini)", cantidad: 300, unidad: 'g' }
-      ],
-      updatedAt: Date.now()
-    }
-  ];
-
-  for (const ins of defaultInsumos) {
-    await putItem('insumos', ins);
+  const existingTour = await getPreference('tour_completed');
+  if (existingTour === null || existingTour === undefined) {
+    await setPreference('tour_completed', false);
   }
-
-  for (const rec of defaultRecipes) {
-    await putItem('postres', rec);
-  }
-
-  await saveGlobalIndirects({
-    nombreNegocio: 'Paulicious Bakery',
-    gasMinutos: 18,
-    costoGasPorMinuto: 0.2667,
-    tarifaHoraManoObra: 80.00,
-    tiempoManoObraMin: 45,
-    empaquePorPieza: 2.00,
-    otrosIndirectos: 0.00
-  });
-
-  await setPreference('theme_preference', 'auto');
-  await setPreference('tour_completed', false);
 
   return true;
+}
+
+/**
+ * Clear all data in IndexedDB (insumos, postres, lotes, indirects)
+ * and reset onboarding state so the user starts fresh.
+ */
+export async function clearAllData() {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(['insumos', 'postres', 'lotesHorneados', 'gastosGenerales', 'preferencias'], 'readwrite');
+    tx.objectStore('insumos').clear();
+    tx.objectStore('postres').clear();
+    tx.objectStore('lotesHorneados').clear();
+    tx.objectStore('gastosGenerales').clear();
+    
+    const storePref = tx.objectStore('preferencias');
+    storePref.put({ key: 'tour_completed', value: false, updatedAt: Date.now() });
+
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
 }
 
 /**
@@ -441,13 +260,14 @@ export async function exportDatabaseJSON() {
   return JSON.stringify({
     version: '2.1.0',
     exportDate: new Date().toISOString(),
-    business: 'Paulicious Bakery',
+    business: indirects.nombreNegocio || 'Bakery Calculator',
     insumos,
     postres,
     lotesHorneados: lotes,
     gastosGenerales: indirects,
     preferencias: { theme_preference: themePref }
   }, null, 2);
+}
 }
 
 /**
@@ -478,3 +298,4 @@ export async function importDatabaseJSON(jsonString) {
 
   return true;
 }
+

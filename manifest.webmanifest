@@ -1,5 +1,5 @@
 {
-  "name": "Bakery Calculator - Paulicious Bakery",
+  "name": "Bakery Calculator",
   "short_name": "Bakery Calc",
   "description": "Calculadora inteligente de costos, márgenes de ganancia, ROI e inventario para repostería artesanal.",
   "start_url": "./index.html",

@@ -1,5 +1,5 @@
-/**
- * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r1)
+﻿/**
+ * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r2)
  * Decoupled event delegation, route orchestrator and silent SW updater.
  */
 
@@ -12,25 +12,27 @@ import {
   saveGlobalIndirects,
   deductInventoryForBatch,
   addStockToInsumo,
-  loadSeedData,
+  initDatabaseDefaults,
+  clearAllData,
   exportDatabaseJSON,
   importDatabaseJSON
-} from './db.b4k3r1.js';
+} from './db.b4k3r2.js';
 
 import {
   computeRecipeFinancials,
   formatCurrencyMXN
-} from './engine.b4k3r1.js';
+} from './engine.b4k3r2.js';
 
 import {
   initTheme,
   applyTheme
-} from './theme.b4k3r1.js';
+} from './theme.b4k3r2.js';
 
 import {
   startTour,
+  resetTour,
   shouldShowTour
-} from './tour.b4k3r1.js';
+} from './tour.b4k3r2.js';
 
 import {
   showToast,
@@ -40,8 +42,9 @@ import {
   updateSimulatorControls,
   renderInsumosList,
   renderRecipesList,
+  renderDashboardEmptyState,
   escapeHTML
-} from './ui.b4k3r1.js';
+} from './ui.b4k3r2.js';
 
 /* App Global State */
 const state = {
@@ -113,7 +116,10 @@ export async function refreshAllData() {
 /* Update Dashboard KPIs based on active recipe */
 export function updateDashboard() {
   const activeRecipe = state.recipes.find(r => r.id === state.activeRecipeId);
-  if (!activeRecipe) return;
+  if (!activeRecipe) {
+    renderDashboardEmptyState();
+    return;
+  }
 
   const financials = computeRecipeFinancials(activeRecipe, state.insumosMap, state.globalIndirects);
   updateRadialKPI(financials);
@@ -150,7 +156,12 @@ function renderGastosForm() {
   }
 
   if (empPieza) empPieza.value = g.empaquePorPieza || 2.00;
-  if (negocioNombre) negocioNombre.value = g.nombreNegocio || 'Paulicious Bakery';
+  if (negocioNombre) negocioNombre.value = g.nombreNegocio || '';
+
+  const brandTitle = document.getElementById('header-brand-title');
+  if (brandTitle) {
+    brandTitle.textContent = g.nombreNegocio || 'Bakery Calculator';
+  }
 }
 
 /* Render Chips in Recipe Creation Wizard */
@@ -608,12 +619,17 @@ function setupEventListeners() {
   // Business Name update
   const businessNameInput = document.getElementById('settings-negocio-nombre');
   if (businessNameInput) {
+    businessNameInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      const brandTitle = document.getElementById('header-brand-title');
+      if (brandTitle) brandTitle.textContent = val || 'Bakery Calculator';
+    });
     businessNameInput.addEventListener('change', async (e) => {
-      const val = e.target.value.trim() || 'Paulicious Bakery';
+      const val = e.target.value.trim();
       state.globalIndirects.nombreNegocio = val;
       await saveGlobalIndirects(state.globalIndirects);
-      const brandText = document.querySelector('.brand-text h1');
-      if (brandText) brandText.textContent = val;
+      const brandTitle = document.getElementById('header-brand-title');
+      if (brandTitle) brandTitle.textContent = val || 'Bakery Calculator';
       showToast('Nombre del negocio actualizado.', 'success');
     });
   }
@@ -657,15 +673,29 @@ function setupEventListeners() {
     });
   }
 
-  // Reset Seed Samples
-  const btnResetSeed = document.getElementById('btn-reset-seed-data');
-  if (btnResetSeed) {
-    btnResetSeed.addEventListener('click', async () => {
-      const conf = await openConfirmDialog('Restablecer Galletas de Ejemplo', '¿Deseas recargar las recetas oficiales de Chispas y M&M\'s y los insumos iniciales?');
+  // Restart Onboarding Tour
+  const btnRestartTour = document.getElementById('btn-restart-tour');
+  if (btnRestartTour) {
+    btnRestartTour.addEventListener('click', () => {
+      resetTour();
+    });
+  }
+
+  // Clear All Data and Start Fresh
+  const btnClearAll = document.getElementById('btn-clear-all-data');
+  if (btnClearAll) {
+    btnClearAll.addEventListener('click', async () => {
+      const conf = await openConfirmDialog(
+        'Borrar Todos los Datos',
+        '¿Deseas vaciar la base de datos por completo y comenzar desde cero? Se borrarán todos los insumos, recetas y configuraciones.',
+        'Sí, borrar todo',
+        'Cancelar'
+      );
       if (conf) {
-        await loadSeedData(true);
-        showToast('Datos de ejemplo recargados correctamente.', 'success');
+        await clearAllData();
+        showToast('Base de datos vaciada con éxito. Iniciando desde cero.', 'info');
         await refreshAllData();
+        startTour(true);
       }
     });
   }
@@ -792,7 +822,7 @@ export function registerServiceWorker() {
 export async function initApp() {
   registerServiceWorker();
   await initTheme();
-  await loadSeedData(false);
+  await initDatabaseDefaults();
   await refreshAllData();
   setupEventListeners();
 
@@ -811,3 +841,4 @@ if (document.readyState === 'loading') {
 } else {
   initApp();
 }
+

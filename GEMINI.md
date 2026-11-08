@@ -1,6 +1,6 @@
 # Guía y Reglas del Proyecto — Bakery Calculator (Antigravity)
 
-Este repositorio corresponde a **Bakery Calculator (Paulicious Bakery)**, una PWA modular de costeo de repostería desarrollada para Erik Fernando Pérez Díaz.
+Este repositorio corresponde a **Bakery Calculator**, una PWA modular y neutral de costeo de repostería y panadería artesanal desarrollada para Erik Fernando Pérez Díaz.
 
 ---
 
@@ -28,6 +28,7 @@ Este repositorio corresponde a **Bakery Calculator (Paulicious Bakery)**, una PW
 
 ## 3. Normas Técnicas y de Arquitectura
 * **Cero JavaScript inline:** Ninguna etiqueta `<script>` con código incrustado en `index.html`. Toda lógica debe residir en módulos ES en `/js`.
-* **Ciclo de vida PWA:** Al alterar archivos de frontend (HTML, CSS, JS), actualizar la constante de caché en `sw.js` y verificar que los recursos precacheados coincidan.
-* **Contexto LLM:** Mantener sincronizado [`llms.txt`](file:///c:/Users/fern8/OneDrive/Documentos/projects/bakery_calculator/llms.txt) si se alteran fórmulas, insumos semilla o la estructura del proyecto.
+* **Cache Busting Obligatorio mediante Hashing:** Cada vez que se modifique cualquier archivo JavaScript o CSS, es mandatorio generar un hash diferente en su nombre (ej. `[nombre].[nuevo-hash].js` / `styles.[nuevo-hash].css`) y propagar la referencia en las importaciones ES Modules, `index.html`, la lista `PRECACHE_ASSETS` y la constante `CACHE_NAME` de `sw.js`, y en `llms.txt`. Esto garantiza que los clientes y la PWA invaliden inmediatamente la caché antigua.
+* **Ciclo de vida PWA:** Al alterar archivos de frontend (HTML, CSS, JS), actualizar la constante de caché en `sw.js` y verificar que los recursos precacheados coincidan exactamente con los existentes.
+* **Contexto LLM:** Mantener sincronizado [`llms.txt`](file:///c:/Users/fern8/OneDrive/Documentos/projects\bakery_calculator\llms.txt) si se alteran fórmulas, estructura de archivos o nombres con hash.
 * **Estilo y Temas:** Usar siempre tokens semánticos nativos `light-dark()` y `color-scheme` en `css/styles.[hash].css`.

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
@@ -31,15 +31,15 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_MX">
-  <meta property="og:title" content="Bakery Calculator - Paulicious Bakery">
+  <meta property="og:title" content="Bakery Calculator - Costos y Márgenes de Repostería">
   <meta property="og:description" content="Calcula al instante costos de producción, márgenes de ganancia, ROI e inventario de tus recetas de repostería.">
-  <meta property="og:image" content="logo_paulicious_bakery.jpg">
+  <meta property="og:image" content="icon-512.png">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Bakery Calculator">
   <meta name="twitter:description" content="Control de costos, punto de equilibrio y mermas en repostería artesanal.">
-  <meta name="twitter:image" content="logo_paulicious_bakery.jpg">
+  <meta name="twitter:image" content="icon-512.png">
 
   <!-- Schema.org JSON-LD -->
   <script type="application/ld+json">
@@ -47,7 +47,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Bakery Calculator",
-    "alternateName": "Paulicious Bakery Calculator",
+    "alternateName": "Bakery Calculator",
     "author": {
       "@type": "Person",
       "name": "Erik Fernando Pérez Díaz"
@@ -67,16 +67,16 @@
   <link rel="stylesheet" href="css/vendor/driver.css">
 
   <!-- Application Stylesheet -->
-  <link rel="stylesheet" href="css/styles.b4k3r1.css">
+  <link rel="stylesheet" href="css/styles.b4k3r2.css">
 </head>
 <body>
   <!-- Main Header -->
   <header class="app-header">
     <a href="#" class="brand" data-view="tab-inicio" aria-label="Ir a Inicio">
-      <img src="logo_paulicious_bakery.jpg" alt="Logo Paulicious Bakery" class="brand-logo">
+      <img src="favicon.svg" alt="Logo Bakery Calculator" class="brand-logo" id="header-brand-logo">
       <div class="brand-text">
-        <h1>Paulicious Bakery</h1>
-        <span>Bakery Calculator</span>
+        <h1 id="header-brand-title">Bakery Calculator</h1>
+        <span id="header-brand-subtitle">Costos y Repostería</span>
       </div>
     </a>
     <div class="header-actions">
@@ -112,21 +112,21 @@
           <div class="radial-kpi-wrap">
             <svg class="radial-svg" viewBox="0 0 160 160" aria-hidden="true">
               <circle class="radial-bg-circle" cx="80" cy="80" r="64"></circle>
-              <circle class="radial-stroke-profit" id="radial-circle-profit" cx="80" cy="80" r="64" stroke-dasharray="402.12" stroke-dashoffset="138.7"></circle>
+              <circle class="radial-stroke-profit" id="radial-circle-profit" cx="80" cy="80" r="64" stroke-dasharray="402.12" stroke-dashoffset="402.12"></circle>
             </svg>
             <div class="radial-center-text">
-              <span class="margin-value" id="hero-margin-value">65.4%</span>
+              <span class="margin-value" id="hero-margin-value">0%</span>
               <span class="margin-label">Margen Real</span>
             </div>
           </div>
           <div class="hero-submetrics">
             <div class="submetric-item">
               <span class="submetric-label">Costo por pieza</span>
-              <span class="submetric-val" id="hero-unit-cost">$9.85</span>
+              <span class="submetric-val" id="hero-unit-cost">$0.00</span>
             </div>
             <div class="submetric-item">
               <span class="submetric-label">Precio de venta</span>
-              <span class="submetric-val" id="hero-sale-price">$28.50</span>
+              <span class="submetric-val" id="hero-sale-price">$0.00</span>
             </div>
           </div>
         </div>
@@ -136,23 +136,23 @@
       <div class="card" id="roi-metric-card">
         <div class="card-title">
           <span>Retorno de Inversión (ROI)</span>
-          <span id="roi-value-display" style="color:var(--success); font-weight:700;">190.4%</span>
+          <span id="roi-value-display" style="color:var(--text-muted); font-weight:700;">0%</span>
         </div>
         <div class="roi-grid">
           <div class="roi-metric">
             <div class="label">Costo Total Lote</div>
-            <div class="value" id="roi-batch-cost">$157.00</div>
+            <div class="value" id="roi-batch-cost">$0.00</div>
           </div>
           <div class="roi-metric">
             <div class="label">Venta Total Lote</div>
-            <div class="value" id="roi-batch-revenue">$456.00</div>
+            <div class="value" id="roi-batch-revenue">$0.00</div>
           </div>
         </div>
         <div class="progress-track" aria-label="Progreso de punto de equilibrio">
-          <div class="progress-bar-fill" id="roi-break-even-progress" style="width: 37.5%;"></div>
+          <div class="progress-bar-fill" id="roi-break-even-progress" style="width: 0%;"></div>
         </div>
         <div class="narrative-box" id="roi-narrative-text">
-          Vende <span class="narrative-highlight">6</span> de <span class="narrative-highlight">16</span> piezas para recuperar tu inversión. Las <span class="narrative-highlight">10</span> piezas restantes generan <span class="narrative-highlight">$298.00</span> de utilidad neta.
+          Aún no tienes recetas registradas. Sigue el <strong>Tour de Inicio</strong> o pulsa en <strong>Recetas</strong> para agregar tu primera creación.
         </div>
       </div>
 
@@ -160,22 +160,22 @@
       <div class="card" id="simulador-card">
         <div class="card-title">
           <span>Simulador Rápido de Ganancia</span>
-          <span class="sim-display-bubble" id="sim-unit-profit">+$18.65 / pza</span>
+          <span class="sim-display-bubble" id="sim-unit-profit">+$0.00 / pza</span>
         </div>
         <div class="sim-row">
           <label for="sim-sale-price-input" style="font-size:0.85rem; font-weight:600;">Precio de venta deseado:</label>
           <div style="display:flex; align-items:center; gap:4px;">
             <span style="font-weight:700;">$</span>
-            <input type="number" id="sim-sale-price-input" class="input-ctrl" step="0.50" min="1.00" value="28.50" style="width:90px; text-align:right; font-weight:700;">
+            <input type="number" id="sim-sale-price-input" class="input-ctrl" step="0.50" min="0" value="0.00" style="width:90px; text-align:right; font-weight:700;">
           </div>
         </div>
-        <input type="range" id="sim-sale-price-slider" class="sim-slider" min="10" max="60" step="0.50" value="28.50" aria-label="Deslizar precio de venta">
+        <input type="range" id="sim-sale-price-slider" class="sim-slider" min="0" max="100" step="0.50" value="0" aria-label="Deslizar precio de venta">
       </div>
 
       <!-- Big Bake Action Button -->
       <div class="card" style="padding: 12px; margin-bottom: 24px;">
-        <button type="button" class="btn-bake-cta" id="btn-bake-cta">
-          <span>👨‍🍳</span> Hornear 1 Lote (16 pzas)
+        <button type="button" class="btn-bake-cta" id="btn-bake-cta" disabled style="opacity: 0.6;">
+          <span>👨‍🍳</span> Sin Receta Activa
         </button>
       </div>
     </section>
@@ -382,7 +382,7 @@
         </div>
         <div class="form-group">
           <label for="settings-negocio-nombre">Nombre de tu Repostería / Taller</label>
-          <input type="text" id="settings-negocio-nombre" class="input-ctrl" value="Paulicious Bakery">
+          <input type="text" id="settings-negocio-nombre" class="input-ctrl" placeholder="Ej. Mi Taller Dulce" value="">
         </div>
         <p style="font-size:0.78rem; color:var(--text-muted);">
           Autor del sistema: <strong>Erik Fernando Pérez Díaz</strong>
@@ -416,7 +416,7 @@
           <span>Aprendizaje y Onboarding</span>
         </div>
         <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-          ¿Quieres repasar cómo calcular márgenes, simular precios y descontar stock en 1 toque?
+          ¿Quieres repasar cómo configurar tu marca, registrar insumos, armar recetas y calcular costos?
         </p>
         <button type="button" class="btn-secondary" id="btn-start-tour-settings" style="width:100%; padding:10px;">
           🚀 Iniciar Tour Interactivo
@@ -426,24 +426,27 @@
       <!-- Backups Card -->
       <div class="card">
         <div class="card-title">
-          <span>Respaldo de Datos (Offline)</span>
+          <span>Gestión de Datos y Respaldo</span>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px;">
           <button type="button" class="btn-secondary" id="btn-export-json">
-            📥 Exportar JSON Seguro
+            📥 Exportar Respaldo JSON
           </button>
           <input type="file" id="file-import-json" accept=".json" style="display:none;">
           <button type="button" class="btn-secondary" id="btn-import-json">
-            📤 Restaurar Archivo JSON
+            📤 Restaurar desde JSON
           </button>
-          <button type="button" class="btn-secondary" id="btn-reset-seed-data" style="color:var(--danger); border-color:var(--danger-light);">
-            🔄 Cargar Galletas de Ejemplo (Chispas y M&amp;M's)
+          <button type="button" class="btn-secondary" id="btn-restart-tour">
+            🧭 Reiniciar Tour de Bienvenida
+          </button>
+          <button type="button" class="btn-secondary" id="btn-clear-all-data" style="color:var(--danger); border-color:var(--danger-light);">
+            🗑 Borrar Todos los Datos y Empezar de Cero
           </button>
         </div>
       </div>
 
       <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); margin: 20px 0;">
-        Bakery Calculator v2.1.0-b4k3r1 • PWA Offline Ready
+        Bakery Calculator v2.1.0-b4k3r2 • PWA Offline Ready
       </div>
     </section>
 
@@ -537,6 +540,7 @@
   <script src="js/vendor/driver.iife.js"></script>
 
   <!-- Modular Application Entry Point (No inline JS) -->
-  <script type="module" src="js/app.b4k3r1.js"></script>
+  <script type="module" src="js/app.b4k3r2.js"></script>
 </body>
 </html>
+

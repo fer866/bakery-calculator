@@ -10,3 +10,14 @@ Thumbs.db
 node_modules/
 dist/
 .cache/
+
+# Design assets, documentation and analysis files (not part of deployed app)
+bakery_calculator_logo.svg
+Costeo_ingredientes_galletas.xlsx
+logo_paulicious_bakery.jpg
+plan_de_desarrollo_bakery_calculator.md
+ui_base_cookiecost.json
+*.xlsx
+*.xls
+*.sketch
+*.fig
