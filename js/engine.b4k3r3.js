@@ -1,5 +1,5 @@
 ﻿/**
- * Bakery Calculator - Engine Module (v2.1.0-b4k3r2)
+ * Bakery Calculator - Engine Module (v2.1.0-b4k3r3)
  * Mathematical costing engine, ROI, break-even and unit conversion.
  */
 
@@ -192,4 +192,5 @@ export function computeRecipeFinancials(recipe, allInsumosMap = {}, globalIndire
     profitRatioPct
   };
 }
+
 

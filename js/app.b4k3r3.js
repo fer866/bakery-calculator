@@ -1,5 +1,5 @@
 ﻿/**
- * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r2)
+ * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r3)
  * Decoupled event delegation, route orchestrator and silent SW updater.
  */
 
@@ -16,23 +16,23 @@ import {
   clearAllData,
   exportDatabaseJSON,
   importDatabaseJSON
-} from './db.b4k3r2.js';
+} from './db.b4k3r3.js';
 
 import {
   computeRecipeFinancials,
   formatCurrencyMXN
-} from './engine.b4k3r2.js';
+} from './engine.b4k3r3.js';
 
 import {
   initTheme,
   applyTheme
-} from './theme.b4k3r2.js';
+} from './theme.b4k3r3.js';
 
 import {
   startTour,
   resetTour,
   shouldShowTour
-} from './tour.b4k3r2.js';
+} from './tour.b4k3r3.js';
 
 import {
   showToast,
@@ -44,7 +44,7 @@ import {
   renderRecipesList,
   renderDashboardEmptyState,
   escapeHTML
-} from './ui.b4k3r2.js';
+} from './ui.b4k3r3.js';
 
 /* App Global State */
 const state = {
@@ -841,4 +841,5 @@ if (document.readyState === 'loading') {
 } else {
   initApp();
 }
+
 
