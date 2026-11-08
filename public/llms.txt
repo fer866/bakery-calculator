@@ -28,7 +28,6 @@
 
 ## Estructura del Repositorio y Módulos
 - `functions/`: Endpoints serverless de Cloudflare Pages Functions:
-  - `ping.js` / `api/ping.js`: Endpoint de salud y diagnóstico de bindings activos.
   - `api/insumos.js`: CRUD de insumos y ajuste rápido de inventario (+1 toque).
   - `api/postres.js`: CRUD de recetas con serialización JSON de indirectos e ingredientes.
   - `api/empresa.js`: Consulta y actualización de datos de la empresa y costos indirectos globales.
