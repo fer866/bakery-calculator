@@ -39,15 +39,15 @@
   - `index.html`: Shell PWA accesible, meta tags SEO, JSON-LD Schema.org, sin código JavaScript embebido.
   - `manifest.webmanifest`: Manifiesto de instalación PWA con soporte standalone y visualización responsiva.
   - `sw.js`: Service Worker offline con precaché determinista y exclusión de rutas dinámicas `/api/*`.
-  - `css/styles.b4k3r4.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
+  - `css/styles.b4k3r5.css`: Tokens de diseño semánticos con light-dark(), layout responsivo mobile-first y componentes UI.
   - `css/vendor/driver.css`: Estilos del tour guiado interactivo de onboarding.
   - `js/vendor/driver.iife.js`: Biblioteca vanilla Driver.js empaquetada para uso offline.
-  - `js/engine.b4k3r4.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
-  - `js/db.b4k3r4.js`: Capa de datos desacoplada: cliente API REST hacia Cloudflare D1 y capa IndexedDB para preferencias locales.
-  - `js/theme.b4k3r4.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
-  - `js/tour.b4k3r4.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
-  - `js/ui.b4k3r4.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
-  - `js/app.b4k3r4.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
+  - `js/engine.b4k3r5.js`: Motor matemático puro de costeo, merma, ROI, punto de equilibrio y conversiones de unidades.
+  - `js/db.b4k3r5.js`: Capa de datos desacoplada: cliente API REST hacia Cloudflare D1 y capa IndexedDB para preferencias locales.
+  - `js/theme.b4k3r5.js`: Gestor reactivo de tema visual (automático según sistema operativo, claro u oscuro forzado).
+  - `js/tour.b4k3r5.js`: Controlador del tour guiado interactivo para nuevos usuarios con Driver.js.
+  - `js/ui.b4k3r5.js`: Renderizador modular de vistas, componentes reactivos, modales y notificaciones toast.
+  - `js/app.b4k3r5.js`: Enrutador de pestañas, orquestador de eventos globales y controlador de actualización de Service Worker.
 
 ## Inicialización y Onboarding
 - Arquitectura limpia: La app inicia lista para configurar insumos y recetas conectadas a Cloudflare D1.

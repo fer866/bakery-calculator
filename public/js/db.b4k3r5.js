@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - Database Client Module (v2.2.0-b4k3r4)
+ * Bakery Calculator - Database Client Module (v2.2.1-b4k3r5)
  * Persistencia en Cloudflare D1 (bakery-db) vía Pages Functions API.
  * IndexedDB reservada exclusivamente para preferencias y ajustes locales del usuario.
  */
@@ -85,6 +85,67 @@ export async function initDatabaseDefaults() {
 }
 
 /* ==========================================================
+ * Manejo de Expiración de Sesión Cloudflare Zero Trust Access
+ * ========================================================== */
+
+let isRedirectingToAuth = false;
+
+export function notifyAndRedirectSessionExpired() {
+  if (isRedirectingToAuth) return;
+  isRedirectingToAuth = true;
+
+  console.warn('[Cloudflare Access] Sesión de Zero Trust vencida (24h). Redirigiendo a reautenticación...');
+
+  if (typeof document !== 'undefined') {
+    if (!document.getElementById('cf-auth-expired-notice')) {
+      const notice = document.createElement('div');
+      notice.id = 'cf-auth-expired-notice';
+      notice.setAttribute('role', 'alertdialog');
+      notice.setAttribute('aria-modal', 'true');
+      notice.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.78);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        animation: fadeIn 0.25s ease-out;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      `;
+      notice.innerHTML = `
+        <div style="background: var(--surface, #ffffff); color: var(--text-main, #1a202c); padding: 2rem; border-radius: 1.25rem; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1);">
+          <div style="font-size: 3.25rem; line-height: 1; margin-bottom: 1rem;">🔐</div>
+          <h2 style="margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em;">Sesión de Acceso Expirada</h2>
+          <p style="margin: 0 0 1.25rem 0; font-size: 0.95rem; line-height: 1.5; opacity: 0.85;">
+            Tu sesión de seguridad de 24 horas en <strong>Cloudflare Zero Trust</strong> ha concluido. Redirigiendo a la pantalla de verificación para renovar tus credenciales...
+          </p>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem;">
+            <div style="width: 22px; height: 22px; border: 3px solid rgba(150, 150, 150, 0.3); border-top-color: #d97706; border-radius: 50%; animation: cf-spin 0.8s linear infinite;"></div>
+            <span style="font-size: 0.9rem; font-weight: 500; opacity: 0.8;">Cargando pantalla de acceso...</span>
+          </div>
+          <style>
+            @keyframes cf-spin { to { transform: rotate(360deg); } }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+          </style>
+        </div>
+      `;
+      document.body.appendChild(notice);
+    }
+
+    setTimeout(() => {
+      // Redirige la navegación del documento a la raíz.
+      // El Service Worker (Network-First en navigation) pasará la petición a la red y Cloudflare
+      // Access responderá con 302 que el navegador seguirá nativamente sin errores de CORS.
+      window.location.href = window.location.origin + '/';
+    }, 1200);
+  }
+}
+
+/* ==========================================================
  * Cliente API REST para Cloudflare D1 (Datos de Negocio)
  * ========================================================== */
 
@@ -99,10 +160,27 @@ async function apiRequest(endpoint, options = {}) {
     options.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(endpoint, {
-    ...options,
-    headers
-  });
+  let response;
+  try {
+    response = await fetch(endpoint, {
+      ...options,
+      headers,
+      credentials: 'include',
+      redirect: 'manual' // Evita que fetch siga la redirección cross-origin a cloudflareaccess.com y dispare un error CORS
+    });
+  } catch (fetchErr) {
+    if (typeof navigator !== 'undefined' && navigator.onLine) {
+      notifyAndRedirectSessionExpired();
+      throw new Error('Sesión de Cloudflare Access vencida. Redirigiendo a reautenticación...');
+    }
+    throw fetchErr;
+  }
+
+  // Detectar redirección de Cloudflare Access (opaqueredirect status 0 o 302) o estados 401/403
+  if (response.type === 'opaqueredirect' || response.status === 401 || response.status === 403) {
+    notifyAndRedirectSessionExpired();
+    throw new Error('Sesión de Cloudflare Zero Trust expirada.');
+  }
 
   if (!response.ok) {
     let errorMsg = `Error HTTP ${response.status}`;

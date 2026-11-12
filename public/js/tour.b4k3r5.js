@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - Tour Module (v2.2.0-b4k3r4)
+ * Bakery Calculator - Tour Module (v2.2.1-b4k3r5)
  * Guided onboarding experience powered by Driver.js (offline-ready).
  * Guides the user step-by-step starting completely from scratch:
  * 1. Welcome & Brand Identity
@@ -11,7 +11,7 @@
  * 7. One-click Batch Baking
  */
 
-import { getPreference, setPreference } from './db.b4k3r4.js';
+import { getPreference, setPreference } from './db.b4k3r5.js';
 
 let driverInstance = null;
 

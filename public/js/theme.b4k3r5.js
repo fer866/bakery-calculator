@@ -1,9 +1,9 @@
 /**
- * Bakery Calculator - Theme Module (v2.2.0-b4k3r4)
+ * Bakery Calculator - Theme Module (v2.2.1-b4k3r5)
  * Seamless tri-state theme sync: auto, light, dark using modern color-scheme & light-dark().
  */
 
-import { getPreference, setPreference } from './db.b4k3r4.js';
+import { getPreference, setPreference } from './db.b4k3r5.js';
 
 let currentMode = 'auto';
 const systemDarkMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

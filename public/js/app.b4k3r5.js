@@ -1,5 +1,5 @@
-﻿/**
- * Bakery Calculator - App Controller & Router (v2.1.0-b4k3r4)
+/**
+ * Bakery Calculator - App Controller & Router (v2.2.1-b4k3r5)
  * Decoupled event delegation, route orchestrator and silent SW updater.
  */
 
@@ -16,23 +16,23 @@ import {
   clearAllData,
   exportDatabaseJSON,
   importDatabaseJSON
-} from './db.b4k3r4.js';
+} from './db.b4k3r5.js';
 
 import {
   computeRecipeFinancials,
   formatCurrencyMXN
-} from './engine.b4k3r4.js';
+} from './engine.b4k3r5.js';
 
 import {
   initTheme,
   applyTheme
-} from './theme.b4k3r4.js';
+} from './theme.b4k3r5.js';
 
 import {
   startTour,
   resetTour,
   shouldShowTour
-} from './tour.b4k3r4.js';
+} from './tour.b4k3r5.js';
 
 import {
   showToast,
@@ -44,7 +44,7 @@ import {
   renderRecipesList,
   renderDashboardEmptyState,
   escapeHTML
-} from './ui.b4k3r4.js';
+} from './ui.b4k3r5.js';
 
 /* App Global State */
 const state = {
@@ -95,6 +95,10 @@ export async function refreshAllData() {
     state.recipes = await getAll('postres');
     state.globalIndirects = await getGlobalIndirects();
   } catch (err) {
+    if (err.message && (err.message.includes('Cloudflare') || err.message.includes('autenticación') || err.message.includes('sesión'))) {
+      // Redirección a login de Cloudflare Zero Trust ya iniciada en db.js
+      return;
+    }
     console.error('Error al sincronizar datos con Cloudflare D1:', err);
     showToast('Error al conectar con Cloudflare D1: ' + err.message, 'danger', 6000);
     state.insumos = state.insumos || [];

@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - UI Module (v2.2.0-b4k3r4)
+ * Bakery Calculator - UI Module (v2.2.1-b4k3r5)
  * Component rendering, reactive DOM diffing, toasts and native dialogs.
  */
 
@@ -7,7 +7,7 @@ import {
   computeRecipeFinancials,
   formatCurrencyMXN,
   formatPercent
-} from './engine.b4k3r4.js';
+} from './engine.b4k3r5.js';
 
 /* Toast Notification Manager */
 export function showToast(message, type = 'info', duration = 3500) {
