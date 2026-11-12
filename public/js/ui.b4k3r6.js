@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - UI Module (v2.2.1-b4k3r5)
+ * Bakery Calculator - UI Module (v2.3.0-b4k3r6)
  * Component rendering, reactive DOM diffing, toasts and native dialogs.
  */
 
@@ -7,7 +7,7 @@ import {
   computeRecipeFinancials,
   formatCurrencyMXN,
   formatPercent
-} from './engine.b4k3r5.js';
+} from './engine.b4k3r6.js';
 
 /* Toast Notification Manager */
 export function showToast(message, type = 'info', duration = 3500) {
@@ -41,6 +41,53 @@ export function showToast(message, type = 'info', duration = 3500) {
       setTimeout(() => toast.remove(), 250);
     }
   }, duration);
+}
+
+/* PWA Update Notification Manager */
+export function showUpdatePrompt(onUpdate) {
+  if (document.getElementById('pwa-update-toast')) return;
+
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.id = 'pwa-update-toast';
+  toast.className = 'toast toast-warning';
+  toast.style.cssText = 'padding: 10px 14px; gap: 12px; align-items: center; border-left-color: var(--primary);';
+  toast.innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px; flex:1;">
+      <span style="font-size:1.2rem; line-height:1;">✨</span>
+      <div>
+        <div style="font-weight:700; font-size:0.875rem;">Actualización disponible</div>
+        <div style="font-size:0.75rem; opacity:0.85;">Haz clic para cargar la nueva versión.</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <button type="button" class="btn-primary" id="pwa-update-btn" style="padding: 6px 12px; font-size: 0.8rem; font-weight:600; cursor: pointer; white-space: nowrap;">Actualizar</button>
+      <button type="button" class="icon-btn" id="pwa-update-dismiss" style="width:26px; height:26px; font-size:0.75rem;" aria-label="Cerrar">✕</button>
+    </div>
+  `;
+
+  const updateBtn = toast.querySelector('#pwa-update-btn');
+  const dismissBtn = toast.querySelector('#pwa-update-dismiss');
+
+  updateBtn.addEventListener('click', () => {
+    updateBtn.disabled = true;
+    updateBtn.textContent = 'Aplicando...';
+    if (typeof onUpdate === 'function') {
+      onUpdate();
+    }
+  });
+
+  dismissBtn.addEventListener('click', () => {
+    toast.remove();
+  });
+
+  container.prepend(toast);
 }
 
 /* Modal Helper */

@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - Engine Module (v2.2.1-b4k3r5)
+ * Bakery Calculator - Engine Module (v2.3.0-b4k3r6)
  * Mathematical costing engine, ROI, break-even and unit conversion.
  */
 

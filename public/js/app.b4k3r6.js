@@ -1,6 +1,6 @@
 /**
- * Bakery Calculator - App Controller & Router (v2.2.1-b4k3r5)
- * Decoupled event delegation, route orchestrator and silent SW updater.
+ * Bakery Calculator - App Controller & Router (v2.3.0-b4k3r6)
+ * Decoupled event delegation, route orchestrator and standard PWA update manager.
  */
 
 import {
@@ -16,26 +16,27 @@ import {
   clearAllData,
   exportDatabaseJSON,
   importDatabaseJSON
-} from './db.b4k3r5.js';
+} from './db.b4k3r6.js';
 
 import {
   computeRecipeFinancials,
   formatCurrencyMXN
-} from './engine.b4k3r5.js';
+} from './engine.b4k3r6.js';
 
 import {
   initTheme,
   applyTheme
-} from './theme.b4k3r5.js';
+} from './theme.b4k3r6.js';
 
 import {
   startTour,
   resetTour,
   shouldShowTour
-} from './tour.b4k3r5.js';
+} from './tour.b4k3r6.js';
 
 import {
   showToast,
+  showUpdatePrompt,
   openConfirmDialog,
   updateRadialKPI,
   updateROICard,
@@ -44,7 +45,7 @@ import {
   renderRecipesList,
   renderDashboardEmptyState,
   escapeHTML
-} from './ui.b4k3r5.js';
+} from './ui.b4k3r6.js';
 
 /* App Global State */
 const state = {
@@ -56,17 +57,6 @@ const state = {
   insumosMap: {},
   wizardSelectedInsumos: []
 };
-
-/* Service Worker Silent Updater on Route/Tab change */
-export function triggerSilentSWUpdate() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready
-      .then(registration => {
-        registration.update();
-      })
-      .catch(() => {});
-  }
-}
 
 /* Tab Switcher / Router */
 export function switchView(targetTabId) {
@@ -83,9 +73,6 @@ export function switchView(targetTabId) {
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Silent SW update on navigation
-  triggerSilentSWUpdate();
 }
 
 /* Data Loaders and State Synchronizers */
@@ -803,31 +790,63 @@ if (editInsumoForm) {
   }
 }
 
-/* Service Worker Registration */
+/* Service Worker Registration & Standard Update Flow */
 export function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(registration => {
-          // Listen for update found
-          registration.addEventListener('updatefound', () => {
-            const installingWorker = registration.installing;
-            if (installingWorker) {
-              installingWorker.addEventListener('statechange', () => {
-                if (installingWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    console.log('Nueva versión de Service Worker instalada silenciosamente.');
-                  }
-                }
-              });
+  if (!('serviceWorker' in navigator)) return;
+
+  let isRefreshing = false;
+
+  // Escuchar cuando el nuevo Service Worker toma el control tras skipWaiting
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    window.location.reload();
+  });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(registration => {
+        // 1. Si ya hay un worker en espera (instalado previamente)
+        if (registration.waiting) {
+          notifyUpdateAvailable(registration.waiting);
+          return;
+        }
+
+        // 2. Si se detecta un nuevo worker en proceso de instalación
+        registration.addEventListener('updatefound', () => {
+          const installingWorker = registration.installing;
+          if (!installingWorker) return;
+
+          installingWorker.addEventListener('statechange', () => {
+            // Cuando termina de instalarse y ya hay un controlador previo activo
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              notifyUpdateAvailable(installingWorker);
             }
           });
-        })
-        .catch(err => {
-          console.warn('Error al registrar Service Worker:', err);
         });
-    });
-  }
+
+        // 3. Verificación al regresar a la pestaña activa
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            registration.update().catch(() => {});
+          }
+        });
+
+        // Chequeo periódico cada hora
+        setInterval(() => {
+          registration.update().catch(() => {});
+        }, 1000 * 60 * 60);
+      })
+      .catch(err => {
+        console.warn('Error al registrar Service Worker:', err);
+      });
+  });
+}
+
+function notifyUpdateAvailable(worker) {
+  showUpdatePrompt(() => {
+    worker.postMessage({ type: 'SKIP_WAITING' });
+  });
 }
 
 /* Initialize Application */

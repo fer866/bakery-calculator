@@ -1,5 +1,5 @@
 /**
- * Bakery Calculator - Database Client Module (v2.2.1-b4k3r5)
+ * Bakery Calculator - Database Client Module (v2.3.0-b4k3r6)
  * Persistencia en Cloudflare D1 (bakery-db) vía Pages Functions API.
  * IndexedDB reservada exclusivamente para preferencias y ajustes locales del usuario.
  */
